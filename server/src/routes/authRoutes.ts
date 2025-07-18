@@ -1,8 +1,10 @@
 import { Router } from 'express';
+import { register, login, logout } from '../controllers/authController';
 
 const router = Router();
 
-// Placeholder route
-router.get('/', (req, res) => res.send('Auth route'));
+router.post('/register', register);
+router.post('/login', login);
+router.post('/logout', logout);
 
 export default router; 

@@ -1,8 +1,9 @@
 import { Router } from 'express';
+import { editProfile } from '../controllers/userController';
+import { authenticate } from '../middleware/authMiddleware';
 
 const router = Router();
 
-// Placeholder route
-router.get('/', (req, res) => res.send('User route'));
+router.patch('/profile', authenticate, editProfile);
 
 export default router; 
