@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import SignInPage from './pages/SignInPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
+import TrackingAppLandingPage from './pages/LandingPage'; 
 import './App.css';
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<TrackingAppLandingPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
