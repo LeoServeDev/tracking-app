@@ -63,9 +63,6 @@
 }
  
 /* Add these to your existing CSS */
-body{
-  overflow-x: hidden;
-}
 
 /* Image hover effects */
 .img-hover-zoom {

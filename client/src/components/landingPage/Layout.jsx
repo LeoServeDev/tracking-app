@@ -14,10 +14,10 @@ import { ImageGallery } from "./ImageGallery"
 function LandingPageLayout() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className="min-h-screen flex flex-col mx-auto">
+      <div className="min-h-screen flex flex-col mx-auto  overflow-x-hidden">
         <AnimatedBackground />
         <Header />
-        <main className="flex-1 mx-auto overflow-hidden">
+        <main className="flex-1 mx-auto  p-4 lg:p-0">
           <Hero />
           <LogoMarquee />
           <Features />
