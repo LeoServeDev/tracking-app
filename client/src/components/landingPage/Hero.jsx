@@ -134,7 +134,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70 mb-4"
+              className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text bg-gradient-to-r from-primary to-primary/70 mb-4"
             >
               Track Time. Boost Productivity.
             </motion.h1>
@@ -152,12 +152,12 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col xs:flex-row gap-3 justify-center md:justify-start"
+              className="flex flex-col xs:flex-row gap-3 justify-center md:justify-start lg:items-start sm:items-center "
             >
-              <Button asChild size="sm" className="text-xs xs:text-sm">
+              <Button asChild size="sm" className="text-xs xs:text-sm hover:bg-white hover:text-black w-full">
                 <Link to="/signup">Get Started</Link>
               </Button>
-              <Button variant="outline" asChild size="sm" className="text-xs xs:text-sm">
+              <Button variant="outline" asChild size="sm" className="text-xs xs:text-sm hover:bg-black w-full">
                 <Link to="/demo">Live Demo</Link>
               </Button>
             </motion.div>

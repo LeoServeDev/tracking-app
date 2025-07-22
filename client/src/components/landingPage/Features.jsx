@@ -33,7 +33,7 @@ export function Features() {
   return (
     <section
       id="features"
-      className="py-4 xs:py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-background/50 backdrop-blur-sm"
+      className="mt-5 py-4 xs:py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 bg-background/50 backdrop-blur-sm"
     >
       <div className="container max-w-7xl mx-auto px-2 xs:px-3 sm:px-4 md:px-6 lg:px-8">
         <motion.div
@@ -43,31 +43,31 @@ export function Features() {
           transition={{ duration: 0.6 }}
           className="text-center mb-4 xs:mb-6 sm:mb-8 md:mb-10 lg:mb-12"
         >
-          <h2 className="text-base xs:text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-2 xs:mb-3 sm:mb-4">
+          <h2 className="  xs:text-lg text-4xl md:text-2xl lg:text-3xl font-bold mb-5 xs:mb-3 sm:mb-4">
             Powerful Features
           </h2>
-          <p className="text-xs xs:text-sm sm:text-base md:text-lg text-muted-foreground max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto">
+          <p className="text-[15px] xs:text-sm md:text-lg text-muted-foreground max-w-xs xs:max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl mx-auto mb-3">
             Everything you need to understand and improve your digital habits
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-5 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 h-full sm:grid-cols-2 lg:grid-cols-3 gap-4 xs:gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: index * 0.2, duration: 0.6 }}
-              className="overflow-hidden rounded-lg xs:rounded-xl bg-background shadow-sm border hover:shadow-md transition-shadow"
+              className="overflow-hidden rounded-lg xs:rounded-xl h-[350px] bg-background shadow-sm border hover:shadow-md transition-shadow"
             >
-              <div className="h-20 xs:h-24 sm:h-32 md:h-40 lg:h-48 overflow-hidden">
+              <div className="h-[250px] xs:h-24 sm:h-32 md:h-40 lg:h-48 overflow-hidden">
                 <img
                   src={feature.image || "/placeholder.svg"}
                   alt={feature.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div className="p-3 xs:p-4 sm:p-5 md:p-6">
+              <div className="mt-4 md:mt-0 p-3 xs:p-4 sm:p-5 md:p-6">
                 <h3 className="text-sm xs:text-base sm:text-lg md:text-xl font-semibold mb-1 xs:mb-2 sm:mb-3">
                   {feature.title}
                 </h3>
