@@ -10,8 +10,27 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173'
+    ];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
+
+// Root route
+app.get('/', (req, res) => {
+  console.log('Root route hit'); 
+  res.json({ message: 'Time Tracking API is running!' });
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
