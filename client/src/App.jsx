@@ -13,10 +13,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<TrackingAppLandingPage />} />
-          <Route path="/signin" element={<SignInPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="*" element={<Navigate to="/signin" replace />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
