@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import TrackingAppLandingPage from './pages/LandingPage'; 
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<TrackingAppLandingPage />} />
           <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="*" element={<Navigate to="/signin" replace />} />
