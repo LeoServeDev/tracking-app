@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login as loginApi } from '../../api/auth';
+import { register as registerApi } from '../../api/auth';
 
-const SignIn = () => {
+const SignUp = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -11,11 +12,18 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    // Split name into first and last name
+    const [firstName, ...rest] = name.trim().split(' ');
+    const lastName = rest.join(' ');
+    if (!firstName || !lastName) {
+      setError('Please enter your full name (first and last).');
+      return;
+    }
     try {
-      await loginApi(email, password);
+      await registerApi(firstName, lastName, email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'Registration failed');
     }
   };
 
@@ -24,19 +32,33 @@ const SignIn = () => {
       <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-xl w-full max-w-4xl relative">
         {/* Form Section */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
-          {/* Back Arrow */}
-          <Link to="/" className="mb-5 text-gray-700 hover:text-black flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 mr-1">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            <span className="hidden md:inline text-sm font-medium">Back</span>
-          </Link>
+        {/* Back Arrow */}
+        <Link to="/" className="mb-5 text-gray-700 hover:text-black flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 mr-1">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          </svg>
+          <span className="hidden md:inline text-sm font-medium">Back</span>
+        </Link>
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Sign In</h1>
-            <p className="text-gray-500 mt-2">Welcome back! Please sign in to continue.</p>
+            <h1 className="text-3xl font-bold text-gray-800">Create an account</h1>
+            <p className="text-gray-500 mt-2">Sign up and get 30 day free trial</p>
           </div>
           {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
           <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
+                Full name
+              </label>
+              <input
+                className="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                id="name"
+                type="text"
+                placeholder="Amélie Laurent"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                 Email
@@ -70,15 +92,15 @@ const SignIn = () => {
                 className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline"
                 type="submit"
               >
-                Sign In
+                Sign Up
               </button>
             </div>
           </form>
           <div className="text-center">
             <p className="text-gray-500 text-sm">
-              Don't have an account?{' '}
-              <Link to="/signup" className="font-bold text-black-500 hover:text-black-600">
-                Sign up
+              Already have an account?{' '}
+              <Link to="/signin" className="font-bold text-black-500 hover:text-black-600">
+                Sign in
               </Link>
             </p>
           </div>
@@ -96,4 +118,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn; 
+export default SignUp; 
