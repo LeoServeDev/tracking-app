@@ -8,8 +8,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'tracker-app';
 export const register = async (req: Request, res: Response) => {
   console.log('Register endpoint hit with body:', req.body);
   try {
-    const { firstName, lastName, email, password, role } = req.body;
-    console.log('Extracted data:', { firstName, lastName, email, role });
+    const { firstName, lastName, email, password } = req.body;
+    console.log('Extracted data:', { firstName, lastName, email });
     
     if (!firstName || !lastName || !email || !password) {
       console.log('Missing required fields');
@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response) => {
       lastName,
       email,
       password: hashedPassword,
-      role: role || 'worker',
+      role: 'worker',
     });
     
     console.log('User created successfully:', user._id);
