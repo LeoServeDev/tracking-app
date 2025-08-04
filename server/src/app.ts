@@ -19,9 +19,17 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
       'http://127.0.0.1:5173'
     ];
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`, req.body);
+  next();
+});
+
 app.use(cors({
   origin: allowedOrigins,
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -30,6 +38,12 @@ app.use(express.json());
 app.get('/', (req, res) => {
   console.log('Root route hit'); 
   res.json({ message: 'Time Tracking API is running!' });
+});
+
+// Test auth route
+app.get('/api/auth/test', (req, res) => {
+  console.log('Auth test route hit');
+  res.json({ message: 'Auth routes are working!' });
 });
 
 app.use('/api/auth', authRoutes);
