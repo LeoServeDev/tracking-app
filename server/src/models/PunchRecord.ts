@@ -10,6 +10,8 @@ export interface IPunchRecord extends Document {
   notes?: string;
   punchType?: 'in' | 'out';
   isManual?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const PunchRecordSchema: Schema = new Schema({

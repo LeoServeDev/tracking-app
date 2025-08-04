@@ -30,4 +30,27 @@ export const register = async (firstName, lastName, email, password) => {
         console.error('Registration error:', error.response?.data || error.message);
         throw error;
     }
+};
+
+export const logout = async () => {
+    try {
+        console.log('Logging out...');
+        const token = localStorage.getItem('token');
+        if (token) {
+            const response = await api.post('/auth/logout', {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log('Logout successful:', response.data);
+        }
+        // Remove token from localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return { message: 'Logged out successfully' };
+    } catch (error) {
+        console.error('Logout error:', error.response?.data || error.message);
+        // Still remove token even if API call fails
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        throw error;
+    }
 }; 

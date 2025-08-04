@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { login as loginApi } from '../../api/auth';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  // Get the page user was trying to access
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+    
     try {
-      await loginApi(email, password);
-      navigate('/dashboard');
+      await login(email, password);
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,10 +77,11 @@ const SignIn = () => {
             </div>
             <div className="mb-6">
               <button
-                className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline"
+                className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline disabled:opacity-50"
                 type="submit"
+                disabled={loading}
               >
-                Sign In
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </div>
           </form>

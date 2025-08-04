@@ -7,7 +7,10 @@ export const punchInOut = async (req: Request & { user?: { userId?: string; _id?
     const userId = req.user?.userId || req.user?._id;
     const { punchType, notes } = req.body;
     
+    console.log('Punch request from user:', userId, 'type:', punchType);
+    
     if (!punchType || !['in', 'out'].includes(punchType)) {
+      console.log('Invalid punch type:', punchType);
       return res.status(400).json({ message: 'Punch type must be "in" or "out"' });
     }
 

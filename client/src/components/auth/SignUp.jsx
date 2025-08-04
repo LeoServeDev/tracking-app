@@ -1,29 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { register as registerApi } from '../../api/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const SignUp = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+    
     // Split name into first and last name
     const [firstName, ...rest] = name.trim().split(' ');
     const lastName = rest.join(' ');
     if (!firstName || !lastName) {
       setError('Please enter your full name (first and last).');
+      setLoading(false);
       return;
     }
+    
     try {
-      await registerApi(firstName, lastName, email, password);
-      navigate('/dashboard');
+      await register(firstName, lastName, email, password);
+      navigate('/signin');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,10 +97,11 @@ const SignUp = () => {
             </div>
             <div className="mb-6">
               <button
-                className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline"
+                className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg w-full focus:outline-none focus:shadow-outline disabled:opacity-50"
                 type="submit"
+                disabled={loading}
               >
-                Sign Up
+                {loading ? 'Creating Account...' : 'Sign Up'}
               </button>
             </div>
           </form>
