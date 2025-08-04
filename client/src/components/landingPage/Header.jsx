@@ -44,7 +44,7 @@ export function Header() {
             {/* Desktop Auth Buttons */}
             <div className="hidden sm:flex space-x-1">
               <Button variant="ghost" size="sm" className="text-xs px-2" asChild>
-                <Link to="/login">Login</Link>
+                <Link to="/signin">Login</Link>
               </Button>
               <Button size="sm" className="text-xs px-2" asChild>
                 <Link to="/signup">Get Started</Link>
@@ -85,7 +85,7 @@ export function Header() {
               ))}
               <div className="pt-2 border-t space-y-2">
                 <Button variant="outline" size="sm" className="w-full text-xs bg-transparent" asChild>
-                  <Link to="/login">Login</Link>
+                  <Link to="/signin">Login</Link>
                 </Button>
                 <Button size="sm" className="w-full text-xs" asChild>
                   <Link to="/signup">Get Started</Link>
