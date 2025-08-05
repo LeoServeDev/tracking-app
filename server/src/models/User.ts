@@ -10,6 +10,8 @@ export interface IUser extends Document {
   phone?: string;
   department?: string;
   isActive?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const UserSchema: Schema = new Schema({

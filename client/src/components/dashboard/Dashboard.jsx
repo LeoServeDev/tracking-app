@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { punchInOut, getTodayPunches, getStats } from '../../api/punch';
 import Profile from '../profile/Profile';
 import PunchButton from './PunchButton';
 import TimesheetTable from './TimesheetTable';
 
 const getToday = () => new Date().toISOString().slice(0, 10);
-
-const STORAGE_KEY = 'punchRecords';
 
 function formatElapsed(ms) {
   const totalSeconds = Math.floor(ms / 1000);
@@ -16,56 +16,80 @@ function formatElapsed(ms) {
 }
 
 const Dashboard = () => {
-  const [isPunchedIn, setIsPunchedIn] = React.useState(false);
-  const [punchTime, setPunchTime] = React.useState(null);
-  const [records, setRecords] = React.useState([]);
-  const [currentPunchIn, setCurrentPunchIn] = React.useState(null);
-  const [elapsed, setElapsed] = React.useState(0);
-  const timerRef = React.useRef(null);
+  const { user } = useAuth();
+  const [isPunchedIn, setIsPunchedIn] = useState(false);
+  const [punchTime, setPunchTime] = useState(null);
+  const [records, setRecords] = useState([]);
+  const [currentPunchIn, setCurrentPunchIn] = useState(null);
+  const [elapsed, setElapsed] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({});
+  const timerRef = useRef(null);
 
-  // Load records from localStorage on mount
-  React.useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setRecords(JSON.parse(stored));
-      } catch {}
-    }
+  // Load data from API on mount
+  useEffect(() => {
+    loadDashboardData();
   }, []);
 
-  // Save records to localStorage whenever they change
-  React.useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-  }, [records]);
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [todayPunchesData, statsData] = await Promise.all([
+        getTodayPunches(),
+        getStats('week')
+      ]);
+      
+      setRecords(todayPunchesData.punches || []);
+      setStats(statsData.stats || {});
+      
+      // Check if user is currently punched in
+      const activePunch = todayPunchesData.punches?.find(p => !p.punchOut);
+      if (activePunch) {
+        setIsPunchedIn(true);
+        setCurrentPunchIn(new Date(activePunch.punchIn));
+        setPunchTime(new Date(activePunch.punchIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Punch in/out logic
-  const handlePunch = () => {
-    if (!isPunchedIn) {
-      // Punch in
-      const now = new Date();
-      setCurrentPunchIn(now);
-      setPunchTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      setIsPunchedIn(true);
-      setElapsed(0);
-    } else {
-      // Punch out
-      const now = new Date();
-      const punchInTime = currentPunchIn;
-      const punchOutTime = now;
-      const totalHours = ((punchOutTime - punchInTime) / (1000 * 60 * 60)).toFixed(2);
-      setRecords([
-        { date: getToday(), punchIn: punchInTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), punchOut: punchOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), totalHours: Number(totalHours) },
-        ...records,
-      ]);
-      setCurrentPunchIn(null);
-      setPunchTime(null);
-      setIsPunchedIn(false);
-      setElapsed(0);
+  const handlePunch = async () => {
+    try {
+      setLoading(true);
+      const punchType = isPunchedIn ? 'out' : 'in';
+      const response = await punchInOut(punchType);
+      
+      if (punchType === 'in') {
+        // Punch in
+        const now = new Date();
+        setCurrentPunchIn(now);
+        setPunchTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        setIsPunchedIn(true);
+        setElapsed(0);
+      } else {
+        // Punch out
+        setCurrentPunchIn(null);
+        setPunchTime(null);
+        setIsPunchedIn(false);
+        setElapsed(0);
+      }
+      
+      // Reload data to get updated records
+      await loadDashboardData();
+    } catch (error) {
+      console.error('Punch error:', error);
+      alert(error.response?.data?.message || 'Punch operation failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   // Live timer effect
-  React.useEffect(() => {
+  useEffect(() => {
     if (isPunchedIn && currentPunchIn) {
       timerRef.current = setInterval(() => {
         setElapsed(Date.now() - currentPunchIn.getTime());
@@ -76,15 +100,12 @@ const Dashboard = () => {
     return () => clearInterval(timerRef.current);
   }, [isPunchedIn, currentPunchIn]);
 
-  // Calculate stats
-  const today = getToday();
-  const todayRecords = records.filter(r => r.date === today);
-  const todayHours = todayRecords.reduce((sum, r) => sum + r.totalHours, 0);
-  const weekRecords = records.slice(0, 7);
-  const weekHours = weekRecords.reduce((sum, r) => sum + r.totalHours, 0);
+  // Calculate stats from API data
+  const todayHours = stats.totalHours || 0;
+  const weekHours = stats.totalHours || 0;
   const overtime = Math.max(0, todayHours - 8);
 
-  const stats = [
+  const statsCards = [
     { label: "Today's Hours", value: todayHours.toFixed(2), icon: '⏰' },
     { label: 'Overtime', value: overtime.toFixed(2), icon: '🔥' },
     { label: 'Total Hours (Week)', value: weekHours.toFixed(2), icon: '📅' },
@@ -113,11 +134,11 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <PunchButton onPunch={handlePunch} isPunchedIn={isPunchedIn} />
+          <PunchButton onPunch={handlePunch} isPunchedIn={isPunchedIn} loading={loading} />
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {stats.map((stat) => (
+          {statsCards.map((stat) => (
             <div key={stat.label} className="bg-gray-800 text-white rounded-xl shadow p-4 flex flex-col items-center">
               <div className="text-3xl mb-2">{stat.icon}</div>
               <div className="text-xl font-bold">{stat.value}</div>
